@@ -4,7 +4,7 @@
 
     header('Access-Control-Allow-Origin: *');
 
-    $exchangerate = R::find('exchangerate', 'ORDER BY id DESC LIMIT 10');
+    $exchangerate = R::findAll('exchangerate', 'ORDER BY id DESC LIMIT 10');
 
     var_dump($exchangerate);
     return;
