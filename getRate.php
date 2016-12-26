@@ -1,11 +1,10 @@
 <?php
-require_once 'global.php';
-use RedBeanPHP\R;
+    require_once 'global.php';
 
-header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Origin: *');
 
-$exchangerate = R::findOne('exchangerate',' ORDER BY date_time DESC ');
+    $exchangerate = R::find('exchangerate',' ORDER BY date_time DESC ');
 
-echo $exchangerate->json;
-return;
+    echo $exchangerate->json;
+    return;
 ?>
