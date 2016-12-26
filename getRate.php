@@ -1,10 +1,11 @@
 <?php
     require_once 'global.php';
+    use RedBeanPHP\R;
 
     header('Access-Control-Allow-Origin: *');
 
-    $exchangerate = R::find('exchangerate',' ORDER BY date_time DESC ');
+    $exchangerate = R::find('exchangerate', 'ORDER BY id DESC LIMIT 10');
 
-    echo $exchangerate->json;
+    var_dump($exchangerate);
     return;
 ?>
