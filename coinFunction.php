@@ -78,5 +78,66 @@
         $response = $login->id;
         return $response;
     }
+
+    function isValidToken($token){
+        $response = false;
+        $login = R::find( 'user', ' token = ? ', [ $token ]);
+        if(!empty($login))
+            $response = true;
+        return $response;
+    }
     
+    function listRate($p){
+        //$filter - the condition (string)
+        //$filter_value - the condition value (array)
+        return R::findAll('exchangerate', $filter . ' ORDER BY dest_cur ASC, create_time DESC',$filter_value);
+    }
+
+    function listOffer($p){
+        //$filter - the condition (string)
+        //$filter_value - the condition value (array)
+        return R::findAll('offer', $filter . ' ORDER BY create_time DESC',$filter_value);
+    }
+
+    function listTransaction($p){
+        //$filter - the condition (string)
+        //$filter_value - the condition value (array)
+        return R::findAll('transaction', $filter . ' ORDER BY create_time DESC',$filter_value);
+    }
+
+    function crtTransaction($p){
+        $transaction = R::dispense('transaction');
+        $transaction->date = date('Y-m-d');
+        $transaction->src_cur = $p["src_cur"];
+        $transaction->src_amt = $p["src_amt"];
+
+        $transaction->offer_rate = $p["offer_rate"];
+
+        $transaction->dest_cur = $p["dest_cur"];
+        $transaction->dest_amt = $p["dst_amt"];
+
+        $transaction->src_user = $p["src_user"];
+        $transaction->dest_user = $p["dest_user"];
+        $transaction->refer_id = $p["refer_id"]; 
+        $transaction->status = "000";
+        $transaction->create_time = date('Y-m-d H:i:s');
+        R::store($transaction);
+    }
+
+    function updTransction($p){
+         $transaction = R::load( 'transaction' , $p["id"]);
+         $transaction->status = $p["status"];
+         R::store($transaction);
+    }
+
+    function crtOffer($p){
+        $offer = R::dispense('offer');
+        $offer->date = date('Y-m-d');
+        $offer->offer_cur = $p["offer_cur"];
+        $offer->offer_amt = $p["offer_amt"];
+        $offer->status = "000";
+        $offer->create_time = date('Y-m-d H:i:s');
+        R::store($offer);
+    }
+
 ?>
