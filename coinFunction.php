@@ -74,35 +74,71 @@
 
     function getUserIdViaToken($token){
         $response = "";
-        $login = R::find( 'user', ' token = ? ', [ $token ]);
+        $login = R::find( 'user', ' token = ? ', array( $token ));
         $response = $login->id;
         return $response;
     }
 
     function isValidToken($token){
         $response = false;
-        $login = R::find( 'user', ' token = ? ', [ $token ]);
+        $login = R::find( 'user', ' token = ? ', array( $token ));
         if(!empty($login))
             $response = true;
         return $response;
     }
     
+    function generateFilter($acptfilter,$p){
+        $acptfilter = array("date","src_cur","dest_cur");
+        $rtn = array();
+        $filter = "";
+        $filter_field = array();
+        $filter_value = array();
+        foreach($acptfilter as $k=>$d)
+            if(isset($p[$k])&&!empty($p[$k])){
+                $filter_field[] = $k."= ? ";
+                $filter_value[] = $d;
+            }
+        
+        if(!empty($filter_value))
+            $filter = implode(" AND ",$filter_field);
+
+        $rtn["f"] = $filter;
+        $rtn["v"] = $filter_value;
+
+        return $rtn;
+    }
+
     function listRate($p){
         //$filter - the condition (string)
         //$filter_value - the condition value (array)
-        return R::findAll('exchangerate', $filter . ' ORDER BY dest_cur ASC, create_time DESC',$filter_value);
+        $acptfilter = array("date","src_cur","dest_cur");
+        $frst = generateFilter($acptfilter,$p);
+        $filter = $frst["f"];
+        $filter_value = $frst["v"];        
+        
+        return R::find('exchangerate', $filter . ' ORDER BY dest_cur ASC, create_time DESC',$filter_value);
     }
 
     function listOffer($p){
         //$filter - the condition (string)
         //$filter_value - the condition value (array)
-        return R::findAll('offer', $filter . ' ORDER BY create_time DESC',$filter_value);
+        $acptfilter = array("offer_cur","status");
+        $frst = generateFilter($acptfilter,$p);
+        $filter = $frst["f"];
+        $filter_value = $frst["v"];        
+
+        return R::find('offer', $filter . ' ORDER BY create_time DESC',$filter_value);
     }
 
     function listTransaction($p){
         //$filter - the condition (string)
         //$filter_value - the condition value (array)
-        return R::findAll('transaction', $filter . ' ORDER BY create_time DESC',$filter_value);
+        $acptfilter = array("date","src_cur","dest_cur","status");
+        $frst = generateFilter($acptfilter,$p);
+        $filter = $frst["f"];
+        $filter_value = $frst["v"];        
+
+        return R::find('transaction', $filter . ' ORDER BY create_time DESC',$filter_value);
     }
 
     function crtTransaction($p){
